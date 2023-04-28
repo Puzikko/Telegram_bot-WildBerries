@@ -7,6 +7,7 @@ const awaitResolve = async (chatId, array, translateObject) => { //! Отпра�
 
 
     const newObject = (obj) => { //! Образование нового объекта
+        if (!obj.hasOwnProperty('totalPrice') && !obj.hasOwnProperty('discountPercent')) return obj; //? проверка на эти две позиции 
         const priceWithDiscount = (obj.totalPrice * (1 - obj.discountPercent / 100)) //? Образование цены с дисконтом
             .toFixed(2) //? Оставить два знака после запятой [5.00]
         let copyObj = Object.entries(obj); //? Преобразование в массив из массивов "ключ, значение" [['key', 'val']]

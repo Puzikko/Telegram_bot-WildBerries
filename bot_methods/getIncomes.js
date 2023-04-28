@@ -12,8 +12,23 @@ const getIncomes = async (chatId, date) => { //! Обработчик поста
     const arrayOfIncomes = await response.data; //? Обработка респонса
 
     if (arrayOfIncomes.length > 0) {
-        awaitResolve(chatId, arrayOfIncomes, {})//? кастомная функция для отправки сообщений последовательно
+        awaitResolve(chatId, arrayOfIncomes, translateIncomes)//? кастомная функция для отправки сообщений последовательно
     } else { bot.sendMessage(chatId, 'На сегодня никаких поставок нет.') }
 };
 
 module.exports.getIncomes = getIncomes;
+
+const translateIncomes = {
+    incomeId: 'Номер поставки',
+    number: 'Номер УПД',
+    date: 'Дата поступления',
+    supplierArticle: 'Артикул поставщика',
+    techSize: 'Размер товара',
+    barcode: 'Бар - код',
+    quantity: 'Количество',
+    totalPrice: 'Цена из УПД',
+    dateClose: 'Дата принятия(закрытия) в WB',
+    warehouseName: 'Название склада',
+    nmId: 'Артикул WB',
+    status: 'Текущий статус поставки',
+};
