@@ -9,7 +9,13 @@ const getStocks = async (chatId, date) => { //! Обработчик склад�
 
     const response = await axiosInstance.get('stocks?dateFrom=' + date)//? запрос от WB
 
-    const arrayOfStocks = response.data;
+    const arrayOfStocks = response.data.map(obj => {
+        delete obj.lastChangeDate; //?vvv
+        delete obj.isSupply;
+        delete obj.isRealization;
+        delete obj.SCCode; //? ^^^^^^ удаление указанных ключей со свойствами
+        return obj; //? возврат объекта
+    });
 
     if (arrayOfStocks.length > 0) {
         awaitResolve(chatId, arrayOfStocks, translateStocks)//? кастомная функция для отправки сообщений последовательно

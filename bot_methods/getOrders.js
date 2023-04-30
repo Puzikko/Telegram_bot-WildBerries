@@ -9,7 +9,19 @@ const getOrders = async (chatId, date) => { //! Обработчик заказ�
 
     const response = await axiosInstance.get('orders?flag=1&dateFrom=' + date)//? запрос от WB
 
-    const arrayOfOrders = response.data;
+    const arrayOfOrders = response.data.map(obj => {
+        delete obj.lastChangeDate; //?vvv
+        delete obj.incomeID;
+        delete obj.odid;
+        delete obj.gNumber;
+        delete obj.sticker;
+        delete obj.srid;
+        if (obj.isCancel === false) {
+            delete obj.isCancel;
+            delete obj.cancel_dt;
+        } //? ^^^^^^ удаление указанных ключей со свойствами
+        return obj; //? возврат объекта
+    });
 
     if (arrayOfOrders.length > 0) {
         awaitResolve(chatId, arrayOfOrders, translateOrders)//? кастомная функция для отправки сообщений последовательно

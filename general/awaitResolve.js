@@ -6,7 +6,7 @@ const bot = new TelegramApi(token);
 const awaitResolve = async (chatId, array, translateObject) => { //! Отправка сообщений по порядку
 
 
-    const newObject = (obj) => { //! Образование нового объекта
+    const newObject = (obj) => { //? Образование нового объекта
         if (!obj.hasOwnProperty('totalPrice') && !obj.hasOwnProperty('discountPercent')) return obj; //? проверка на эти две позиции 
         const priceWithDiscount = (obj.totalPrice * (1 - obj.discountPercent / 100)) //? Образование цены с дисконтом
             .toFixed(2) //? Оставить два знака после запятой [5.00]
@@ -26,10 +26,15 @@ const awaitResolve = async (chatId, array, translateObject) => { //! Отпра�
             .join('\n')
     };
 
-    let item = 1; //? порядковый номер сообщения
-    for await (value of array) { //? обработка ассинхронных сообщений, для вывода value из массива array по порядку
-        await bot.sendMessage(chatId, (item) + ') ' + messageConstructor(newObject(value), translateObject) + '\n\n')  //? Отправка сообщения боту
-        item += 1;
+    let text = new String;
+    for (let i = 1; i <= array.length; i++) {
+        text += i + ') ' + messageConstructor(newObject(array[i - 1]), translateObject) + '\n\n';
+        if (i % 10 === 0) {
+            await bot.sendMessage(chatId, text);
+            text = '';
+        } else if (i === array.length) {
+            await bot.sendMessage(chatId, text);
+        }
     }
 };
 

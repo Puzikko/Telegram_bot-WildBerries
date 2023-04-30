@@ -9,7 +9,17 @@ const getSales = async (chatId, date) => { //! Обработчик продаж
 
     const response = await axiosInstance.get('sales?flag=1&dateFrom=' + date)//? запрос от WB
 
-    const arrayOfSales = response.data;
+    const arrayOfSales = response.data.map(obj => {
+        delete obj.lastChangeDate;//?vvv
+        delete obj.gNumber;
+        delete obj.isSupply;
+        delete obj.isRealization;
+        delete obj.oblastOkrugName;
+        delete obj.odid;
+        delete obj.sticker;
+        delete obj.srid;//? ^^^^^^ удаление указанных ключей со свойствами
+        return obj; //? возврат объекта
+    });
 
     if (arrayOfSales.length > 0) {
         awaitResolve(chatId, arrayOfSales, translateSales)//? кастомная функция для отправки сообщений последовательно
@@ -46,7 +56,7 @@ const translateSales = {
     subject: 'Предмет',
     category: 'Категория',
     brand: 'Бренд',
-    isStorno: 'Для сторно-операций 1, для остальных 0',
+    IsStorno: 'Для сторно-операций 1, для остальных 0',
     sticker: 'Цифровое значение стикера',
     srid: 'Уникальный идентификатор заказа'
 };
