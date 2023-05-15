@@ -9,7 +9,7 @@ const getSales = async (chatId, date) => { //! Обработчик продаж
 
     const response = await axiosInstance.get('sales?flag=1&dateFrom=' + date)//? запрос от WB
 
-    const arrayOfSales = response.data.map(obj => {
+    const arrayOfSales = await response.data.map(obj => {
         delete obj.lastChangeDate;//?vvv
         delete obj.gNumber;
         delete obj.isSupply;
@@ -20,9 +20,9 @@ const getSales = async (chatId, date) => { //! Обработчик продаж
         delete obj.srid;//? ^^^^^^ удаление указанных ключей со свойствами
         return obj; //? возврат объекта
     });
-
+    // console.log(arrayOfSales)
     if (arrayOfSales.length > 0) {
-        awaitResolve(chatId, arrayOfSales, translateSales)//? кастомная функция для отправки сообщений последовательно
+        awaitResolve(chatId, arrayOfSales, translateSales, 5)//? кастомная функция для отправки сообщений последовательно
     } else { bot.sendMessage(chatId, 'На сегодня информации о продажах нет.') };
 
 };
