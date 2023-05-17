@@ -7,7 +7,11 @@ const newObject = (obj) => { //! Образование нового объек�
         .toFixed(2) //? Оставить два знака после запятой [5.00]
 
     let copyObj = Object.entries(obj); //? Преобразование в массив из массивов "ключ, значение" [['key', 'val']]
-    if (!!obj['date']) copyObj['date'] = changeDateForm(obj['date']);
+    copyObj = copyObj.map(arr => {
+        return arr[0] === 'date'
+            ? ['date', changeDateForm(obj['date'])]
+            : arr
+    })
     const index1 = copyObj.findIndex((el) => el[0] === 'totalPrice'); //? Поиск нужного индекса
     copyObj.splice(index1 + 1, 0, ['priceWithDiscount', priceWithDiscount]); //? Добавление нового массива
 
@@ -29,7 +33,7 @@ const addTimeSinceOrder = (date) => { //! Добавляем сколько пр
     const ms = (Date.parse(today) - Date.parse(date));
     const hours = Math.floor(ms / 3600000);
     const minutes = Math.floor((ms - hours * 3600000) / 60000);
-    const text = `${hours} часов ${minutes} минут`;
+    const text = `${hours + 3} часов ${minutes} минут`; //? +3 из-за часового пояса
     return text;
 };
 

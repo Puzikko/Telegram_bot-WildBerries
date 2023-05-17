@@ -6,7 +6,7 @@ const { axiosInstance } = require("../api/axios_instance");
 
 
 const test = (chatId, msg) => { //! Тестовый алгоритм
-    bot.sendMessage(chatId, 'testing tests...')
+    bot.sendMessage(chatId, new Date())
 };
 
 
