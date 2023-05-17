@@ -32,15 +32,15 @@ const getOrders = async (chatId, date) => { //! Обработчик заказ�
 module.exports.getOrders = getOrders;
 
 const translateOrders = {
-    date: 'Дата и время заказа',
-    supplierArticle: 'Артикул поставщика',
+    date: '📅 🕔',
+    supplierArticle: '🎁',
     techSize: 'Размер',
     barcode: 'Бар-код',
-    totalPrice: 'Полная цена',
-    priceWithDiscount: 'Цена с дисконтом',
-    discountPercent: 'Согласованный итоговый дисконт',
-    warehouseName: 'Склад отгрузки',
-    oblast: 'Область',
+    totalPrice: '💲',
+    priceWithDiscount: '💰',
+    discountPercent: '📉, %',
+    warehouseName: '🚚',
+    oblast: '🏛 Область',
     incomeID: 'Номер поставки (от продавца на склад)',
     odid: 'Уникальный идентификатор позиции заказа',
     nmId: 'Артикул WB',

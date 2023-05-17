@@ -21,8 +21,8 @@ module.exports.getIncomes = getIncomes;
 const translateIncomes = {
     incomeId: 'Номер поставки',
     number: 'Номер УПД',
-    date: 'Дата поступления',
-    supplierArticle: 'Артикул поставщика',
+    date: '📅',
+    supplierArticle: '🎁',
     techSize: 'Размер товара',
     barcode: 'Бар - код',
     quantity: 'Количество',

@@ -1,5 +1,5 @@
 const TelegramApi = require("node-telegram-bot-api");
-const { token } = require("./env")
+const { token, textFromServer } = require("./env")
 const { getOrders } = require("./bot_methods/getOrders");
 const { getIncomes } = require("./bot_methods/getIncomes");
 const { getStocks } = require("./bot_methods/getStocks");
@@ -7,7 +7,6 @@ const { getSales } = require("./bot_methods/getSales");
 const { test } = require("./bot_methods/test");
 
 const bot = new TelegramApi(token, { polling: true });
-
 const today = new Date;
 const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 //!----------------------------------------------------------------------------------
@@ -16,13 +15,16 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     const chatId = msg.chat.id; //? ID чата откуда его вызвали
     const botName = "@TesterOfTestsBot"; //? уникальное имя бота (опционально)
 
-    if (text === "/start" || text === "/start" + botName) {
+    if (text === "/start" || text === "/start" + botName || text === "/info" || text === "/info" + botName) {
         await bot.sendMessage(chatId, `Я предназначен для отображения статистики с платформы WildBerries.
         Используйте команды для получения информации:
         /orders - о заказах; 
         /incomes - о поставках;
         /stocks - о складах;
-        /sales - о продажах.`)
+        /sales - о продажах;
+        /info - информация о боте.
+
+	${textFromServer}`)
     };
     if (text === "/orders" || text === "/orders" + botName) {
         getOrders(chatId, date);
@@ -37,6 +39,6 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
         getSales(chatId, date);
     };
     if (text === "/test" || text === "/test" + botName) {
-        test(chatId);
+        test(chatId, text);
     };
 });
