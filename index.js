@@ -1,21 +1,22 @@
 const TelegramApi = require("node-telegram-bot-api");
 const { token, textFromServer } = require("./env")
-const { getOrders } = require("./bot_methods/getOrders");
+const { getOrders } = require("./bot_methods/orders/getOrders");
 const { getIncomes } = require("./bot_methods/getIncomes");
 const { getStocks } = require("./bot_methods/getStocks");
 const { getSales } = require("./bot_methods/getSales");
 const { test } = require("./bot_methods/test");
+const { getOrdersTiming } = require('./bot_methods/orders/getOrdersTiming');
 
 const bot = new TelegramApi(token, { polling: true });
-const today = new Date;
-const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
 //!----------------------------------------------------------------------------------
 bot.on('message', async msg => { //! Всё что приходит от бота
+    const today = new Date;
+    const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
     const text = msg.text; //? принятое сообщение
     const chatId = msg.chat.id; //? ID чата откуда его вызвали
     const botName = "@TesterOfTestsBot"; //? уникальное имя бота (опционально)
 
-    if (text === "/start" || text === "/start" + botName || text === "/info" || text === "/info" + botName) {
+    if (text === "/info" || text === "/info" + botName) {
         await bot.sendMessage(chatId, `Я предназначен для отображения статистики с платформы WildBerries.
         Используйте команды для получения информации:
         /orders - о заказах; 
@@ -25,6 +26,9 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
         /info - информация о боте.
 
 	${textFromServer}`)
+    };
+    if (text === "/start" || text === "/start" + botName) {
+        getOrdersTiming(chatId, date);
     };
     if (text === "/orders" || text === "/orders" + botName) {
         getOrders(chatId, date);

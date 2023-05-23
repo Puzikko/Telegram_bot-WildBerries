@@ -6,7 +6,16 @@ const { axiosInstance } = require("../api/axios_instance");
 
 
 const test = (chatId, msg) => { //! Тестовый алгоритм
-    bot.sendMessage(chatId, new Date())
+    const button = {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{ text: 'Hello' }]
+            ]
+        })
+
+    }
+
+    bot.sendMessage(chatId, 'yo!', button)
 };
 
 
