@@ -1,29 +1,32 @@
 const { awaitResolve } = require("../../general/awaitResolve");
 
-const saveAndSendOrders = (orders = [], arrID, chatId, translateOrders) => {
-	const newArrayOfID = [...orders.map(x => x.odid)]; //? копирует массив ID с вновь прибывшими заказами
+const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
+	// console.log(orders)
+	if (orders.length === 0) return arrID;
+	let copyOrdersOrId = [...orders.map(x => x.odid)]; //? копирует массив ID с вновь прибывшими заказами
 
-	const filteringArray = newArrayOfID.filter(x => { //? отфильтровывается в новый массив
+	const filteringArray = copyOrdersOrId.filter(x => { //? отфильтровывается в новый массив
 		if (arrID.includes(x) === false) return x //? если такого ID не было записано
 	})
 
-	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объект заказа
-		if (arrID.includes(x) === false) return x //? если такого ID не было записано
+	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
+		if (arrID.includes(x.odid) === false) return transformArray([x]) //? если такого ID не было записано
 	})
 
-	if (filteringArray.length > 0) {
-		orders.map(x => {
-			if (filteringArray.includes(x.odid)) { //? вновь прибывшие ID пересылаются сообщением
-				awaitResolve(chatId, transformArray([x]), translateOrders)//? кастомная функция для отправки сообщений последовательно
-			}
-		})
-	}
+	// if (filteringArray.length > 0) {
+	// 	copyOrdersOrId = orders.map(x => {
+	// 		if (filteringArray.includes(x.odid)) { //? вновь прибывшие ID пересылаются сообщением
+	// 			transformArray([x])
+	// 		}
+	// 	})
+	// }
+	awaitResolve(chatId, filteringOrders, translateOrders)//? кастомная функция для отправки сообщений последовательно
 
 	return [...arrID, ...filteringArray]; //? возврат нового массива с ID
 }
 
 const transformArray = (response = []) => {
-	return response?.map(obj => {
+	return response.map(obj => {
 		delete obj.lastChangeDate; //?vvv
 		delete obj.incomeID;
 		delete obj.odid;

@@ -1,6 +1,6 @@
 
 const newObject = (obj) => { //! Образование нового объекта
-
+    console.log(obj)
     if (!obj.hasOwnProperty('totalPrice') && !obj.hasOwnProperty('discountPercent')) return obj; //? проверка на эти две позиции 
 
     const priceWithDiscount = (obj.totalPrice * (1 - obj.discountPercent / 100)) //? Образование цены с дисконтом
