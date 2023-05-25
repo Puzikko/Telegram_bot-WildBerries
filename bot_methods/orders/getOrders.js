@@ -13,7 +13,7 @@ const getOrders = async (chatId, date) => { //! Обработчик заказ�
         const arrayOfOrders = await transformArray(response.data);
 
         if (arrayOfOrders.length > 0) {
-            awaitResolve(chatId, arrayOfOrders, translateOrders)//? кастомная функция для отправки сообщений последовательно
+            awaitResolve(chatId, arrayOfOrders, 0, translateOrders)//? кастомная функция для отправки сообщений последовательно
             // await bot.sendMessage(chatId, 'Это был последний заказ на текущий запрос.')
         } else { bot.sendMessage(chatId, 'На сегодня никаких заказов нет.') }
     } catch (error) {

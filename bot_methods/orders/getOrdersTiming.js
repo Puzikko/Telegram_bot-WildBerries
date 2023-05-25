@@ -13,8 +13,7 @@ const getOrdersTiming = async (chatId, date, stopInterval) => { //! Обрабо
 
         arrayOfID = await saveAndSendOrders(await response.data, arrayOfID, chatId, translateOrders)
     } catch (error) {
-        // console.log(error)
-        stopInterval();
+        stopInterval(); //? Остановка интервала при появлении ошибки
         if (!!error.response.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
                 case 401:
@@ -27,7 +26,7 @@ const getOrdersTiming = async (chatId, date, stopInterval) => { //! Обрабо
                     bot.sendMessage(chatId, 'Error:  ' + error.response.data.errors.join('\n'))
                     break;
             }
-        } else {bot.sendMessage(chatId, 'Что-то пошло не так в Интервале')} //? в случае ошибки отправляет сообщение
+        } else { bot.sendMessage(chatId, 'Что-то пошло не так в Интервале') } //? в случае ошибки отправляет сообщение
         bot.sendMessage(chatId, 'Интервальная функция была автоматически остановлена.\nЧтобы запустить её снова отправьте команду:\n/start')
     }
 };

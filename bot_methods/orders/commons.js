@@ -1,26 +1,19 @@
 const { awaitResolve } = require("../../general/awaitResolve");
 
 const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
-	// console.log(orders)
 	if (orders.length === 0) return arrID;
 	let copyOrdersOrId = [...orders.map(x => x.odid)]; //? копирует массив ID с вновь прибывшими заказами
 
-	const filteringArray = copyOrdersOrId.filter(x => { //? отфильтровывается в новый массив
+	const filteringArray = copyOrdersOrId.filter(x => { //? отфильтровывается в новый массив уникальный ID
 		if (arrID.includes(x) === false) return x //? если такого ID не было записано
 	})
 
-	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
-		if (arrID.includes(x.odid) === false) return transformArray([x]) //? если такого ID не было записано
+	const filteringOrders = orders.filter((x, i) => { //? отфильтровывается в новый массив объекты заказа
+		if (arrID.includes(x.odid) === false) {
+			return { ...transformArray([x])[0] }; //? если такого ID не было записано
+		}
 	})
-
-	// if (filteringArray.length > 0) {
-	// 	copyOrdersOrId = orders.map(x => {
-	// 		if (filteringArray.includes(x.odid)) { //? вновь прибывшие ID пересылаются сообщением
-	// 			transformArray([x])
-	// 		}
-	// 	})
-	// }
-	awaitResolve(chatId, filteringOrders, translateOrders)//? кастомная функция для отправки сообщений последовательно
+	awaitResolve(chatId, filteringOrders, arrID.length, translateOrders)//? кастомная функция для отправки сообщений последовательно
 
 	return [...arrID, ...filteringArray]; //? возврат нового массива с ID
 }
