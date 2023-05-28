@@ -5,17 +5,14 @@ const { getIncomes } = require("./bot_methods/getIncomes");
 const { getStocks } = require("./bot_methods/getStocks");
 const { getSales } = require("./bot_methods/getSales");
 const { test } = require("./bot_methods/test");
-const { getOrdersTiming } = require('./bot_methods/orders/getOrdersTiming');
+const { startInterval, stopInterval } = require("./general/automaticRequest");
 
 const bot = new TelegramApi(token, { polling: true });
-let interval = undefined; //? переменная для инициализации setInterval для ф-ии getOrdersTiming
 
-const stopInterval = () => {
-    clearInterval(interval)
-}
 //!----------------------------------------------------------------------------------
 bot.on('message', async msg => { //! Всё что приходит от бота
-    const today = new Date;
+    const parse = Date.parse(new Date); //? переводим дату в мс
+    const today = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
     const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
     const text = msg.text; //? принятое сообщение
     const chatId = msg.chat.id; //? ID чата откуда его вызвали
@@ -35,11 +32,8 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     };
     try {
         if (text === "/start" || text === "/start" + botName) {
+            startInterval(chatId, stopInterval);
             bot.sendMessage(chatId, 'Interval is working.');
-            interval = setInterval(() => { //? Установка интервала для переодичного вызова ф-ии
-                console.log(today) //? для отслеживания в консоле сервера последние логи работы бота
-                getOrdersTiming(chatId, date, stopInterval)
-            }, 300000);
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение

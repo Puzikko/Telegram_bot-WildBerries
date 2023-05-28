@@ -8,11 +8,11 @@ const { axiosInstance } = require("../api/axios_instance");
 const test = (chatId, msg) => { //! Тестовый алгоритм
     const button = {
         reply_markup: JSON.stringify({
-            
-                inline_keyboard: [
-                    [{ text: 'Hello', callback_data: '/test' }]
-                ]
-            
+
+            inline_keyboard: [
+                [{ text: 'Hello', callback_data: '/test' }, { text: 'Hello', callback_data: '/test' }]
+            ]
+
         })
 
     }
