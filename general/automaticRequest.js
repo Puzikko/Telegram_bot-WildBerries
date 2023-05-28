@@ -21,5 +21,10 @@ const stopInterval = () => {
     isWorking = false;
 }
 
+const getIntervalStatus = () => {
+    return isWorking;
+}
+
 module.exports.startInterval = startInterval;
 module.exports.stopInterval = stopInterval;
+module.exports.getIntervalStatus = getIntervalStatus;

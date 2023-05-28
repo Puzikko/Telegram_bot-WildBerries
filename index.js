@@ -5,15 +5,17 @@ const { getIncomes } = require("./bot_methods/getIncomes");
 const { getStocks } = require("./bot_methods/getStocks");
 const { getSales } = require("./bot_methods/getSales");
 const { test } = require("./bot_methods/test");
-const { startInterval, stopInterval } = require("./general/automaticRequest");
+const { startInterval, stopInterval, getIntervalStatus } = require("./general/automaticRequest");
+const { buttonsWithDate } = require("./bot_methods/orders/commons");
 
 const bot = new TelegramApi(token, { polling: true });
 
 //!----------------------------------------------------------------------------------
 bot.on('message', async msg => { //! Всё что приходит от бота
     const parse = Date.parse(new Date); //? переводим дату в мс
-    const today = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
-    const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
+    const dateNow = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
+    const today = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-" + dateNow.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
+    const yesterday = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-" + (dateNow.getDate() - 1); //? определение вчерашней даты в формате ГГГГ-ММ-ДД
     const text = msg.text; //? принятое сообщение
     const chatId = msg.chat.id; //? ID чата откуда его вызвали
     const botName = "@TesterOfTestsBot"; //? уникальное имя бота (опционально)
@@ -32,21 +34,31 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     };
     try {
         if (text === "/start" || text === "/start" + botName) {
-            startInterval(chatId, stopInterval);
-            bot.sendMessage(chatId, 'Interval is working.');
+            if (!getIntervalStatus()) {
+                startInterval(chatId, stopInterval);
+                bot.sendMessage(chatId, 'Interval запущен.');
+            } else {
+                bot.sendMessage(chatId, 'Interval всё ещё работает.');
+            }
+
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
     }
 
     if (text === "/stop" || text === "/stop" + botName) {
-        stopInterval();
-        bot.sendMessage(chatId, 'Interval stoped.')
+
+        if (getIntervalStatus()) {
+            stopInterval();
+            bot.sendMessage(chatId, 'Interval остановлен.')
+        } else {
+            bot.sendMessage(chatId, 'Interval уже не работает.');
+        }
     };
 
     try {
         if (text === "/orders" || text === "/orders" + botName) {
-            getOrders(chatId, date);
+            buttonsWithDate(chatId, [today, yesterday]);
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
@@ -54,7 +66,7 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
 
     try {
         if (text === "/incomes" || text === "/incomes" + botName) {
-            getIncomes(chatId, date);
+            getIncomes(chatId, today);
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
@@ -62,7 +74,7 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
 
     try {
         if (text === "/stocks" || text === "/stocks" + botName) {
-            getStocks(chatId, date);
+            getStocks(chatId, today);
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
@@ -70,24 +82,32 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
 
     try {
         if (text === "/sales" || text === "/sales" + botName) {
-            getSales(chatId, date);
+            getSales(chatId, today);
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
     }
 
     if (text === "/test" || text === "/test" + botName) { //! блок с кнопками inlineButton в сообщении (в разработке)
-        test(chatId, text);
+        test(chatId, [today, yesterday]);
     };
 });
 
-bot.on('callback_query', msg => { //! обработка команд с кнопок inlineButton
+bot.on('callback_query', async msg => { //! обработка команд с кнопок inlineButton
+    const parse = Date.parse(new Date); //? переводим дату в мс
+    const dateNow = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
+    const today = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-" + dateNow.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
+    const yesterday = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-" + (dateNow.getDate() - 1); //? определение вчерашней даты в формате ГГГГ-ММ-ДД
+
     const textCBQ = msg.data;
-    const chatId = msg.chat.id; //? ID чата откуда его вызвали
+    const chatId = msg.message.chat.id; //? ID чата откуда его вызвали
 
     try {
-        if (textCBQ === "/test") {
-            test(chatId, text);
+        if (textCBQ === today) {
+            getOrders(chatId, today);
+        };
+        if (textCBQ === yesterday) {
+            getOrders(chatId, yesterday);
         };
     } catch (error) {
         console.log(error)

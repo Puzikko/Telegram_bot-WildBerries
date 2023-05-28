@@ -5,16 +5,13 @@ const bot = new TelegramApi(token);
 const { axiosInstance } = require("../api/axios_instance");
 
 
-const test = (chatId, msg) => { //! Тестовый алгоритм
+const test = (chatId, arrayOfDates = []) => { //! Тестовый алгоритм
     const button = {
         reply_markup: JSON.stringify({
-
             inline_keyboard: [
-                [{ text: 'Hello', callback_data: '/test' }, { text: 'Hello', callback_data: '/test' }]
+                [{ text: 'Today', callback_data: arrayOfDates[0] }, { text: 'Yesterday', callback_data: arrayOfDates[1] }]
             ]
-
         })
-
     }
 
     bot.sendMessage(chatId, 'yo!', button)

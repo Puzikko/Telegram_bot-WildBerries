@@ -1,4 +1,21 @@
+const { token } = require("../../env");
 const { awaitResolve } = require("../../general/awaitResolve");
+const TelegramApi = require("node-telegram-bot-api");
+
+const bot = new TelegramApi(token);
+
+const buttonsWithDate = (chatId, arrayOfDates = []) => { //! блок с inline_buttons для запроса заказов на сегодня или вчера
+	const button = {
+		reply_markup: JSON.stringify({ //? преобразуем в JSON-формат 
+			inline_keyboard: [
+				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: arrayOfDates[0] }, //? первая кнопка
+				{ text: 'Вчера: ' + arrayOfDates[1], callback_data: arrayOfDates[1] }] //? вторая кнопка
+			]
+		})
+	}
+
+	bot.sendMessage(chatId, 'Выберете дату:', button)
+};
 
 const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
 	if (orders.length === 0) return arrID;
@@ -60,3 +77,4 @@ const translateOrders = {
 module.exports.translateOrders = translateOrders;
 module.exports.transformArray = transformArray;
 module.exports.saveAndSendOrders = saveAndSendOrders;
+module.exports.buttonsWithDate = buttonsWithDate;
