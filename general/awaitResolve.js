@@ -10,7 +10,7 @@ const awaitResolve = async (chatId, array, serNumber, translateObject, messageС
     let text = new String;
     for (let i = 1; i <= array.length; i++) {
 
-        text += (serNumber + i) + ') ' + messageConstructor(newObject(array[i - 1]), translateObject) + '\n----------------------------------------\n';
+        text += (serNumber + i) + ') ' + messageConstructor(newObject(array[i - 1]), translateObject) + '\n----------------------------------\n';
         if (i % messageСontent === 0) {
             await bot.sendMessage(chatId, text);
             text = '';

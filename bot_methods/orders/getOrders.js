@@ -8,7 +8,7 @@ const bot = new TelegramApi(token);
 
 const getOrders = async (chatId, date) => { //! Обработчик заказов
     try {
-        const response = await axiosInstance.get('orders?flag=1&dateFrom=' + date)//? запрос от WB
+        const response = await axiosInstance.get('orders?flag=0&dateFrom=' + date)//? запрос от WB
 
         const arrayOfOrders = await transformArray(response.data);
 

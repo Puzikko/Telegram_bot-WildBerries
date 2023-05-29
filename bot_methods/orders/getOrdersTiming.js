@@ -15,14 +15,14 @@ const getOrdersTiming = async (chatId, stopInterval) => { //! Обработчи
     const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
     console.log(hours, minutes)
     if (arrayOfID.length > 0) { //? обновление массива при смене дня
-        if(hours === 0 && minutes >= 0 && minutes <= 5){ //? проверка времени 00:00 - 00:05, в этом интервале обновим массив
-            arrayOfID = []; 
+        if (hours === 0 && minutes >= 0 && minutes <= 5) { //? проверка времени 00:00 - 00:05, в этом интервале обновим массив
+            arrayOfID = [];
             bot.sendMessage(chatId, 'Массив с ID обновлён.')
         }
     };
 
     try {
-        const response = await axiosInstance.get('orders?flag=1&dateFrom=' + date)//? запрос от WB
+        const response = await axiosInstance.get('orders?flag=0&dateFrom=' + date)//? запрос от WB
 
         arrayOfID = await saveAndSendOrders(await response.data, arrayOfID, chatId, translateOrders)
     } catch (error) {
