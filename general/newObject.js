@@ -32,7 +32,7 @@ const addTimeSinceOrder = (date) => { //! Добавляем сколько пр
     const ms = (Date.parse(today) - Date.parse(date));
     const hours = Math.floor(ms / 3600000);
     const minutes = Math.floor((ms - hours * 3600000) / 60000);
-    const text = `${hours + 3} часов ${minutes} минут`; //? +3 из-за часового пояса
+    const text = `${hours + 3} ч. ${minutes} мин.`; //? +3 из-за часового пояса
     return text;
 };
 

@@ -1,39 +1,38 @@
 const TelegramApi = require("node-telegram-bot-api");
 const { token } = require("../../env");
-const { axiosInstance } = require("../../api/axios_instance");
+const { ordersAPI } = require("../../api/axios_instance");
 const { translateOrders } = require('./commons');
-const { saveAndSendOrders } = require('./commons')
+const { saveAndSendOrders } = require('./commons');
 
 const bot = new TelegramApi(token);
-let arrayOfID = [];
+let arrayOfOrders = [];
 
-const getOrdersTiming = async (chatId, stopInterval) => { //! Обработчик заказов
+const getOrdersTiming = async (chatId, stopInterval, startInterval) => { //! Обработчик заказов
     const parse = Date.parse(new Date);
     const today = new Date(parse + 10800000);
     const hours = today.getHours();
     const minutes = today.getMinutes();
     const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
     console.log(hours, minutes)
-    if (arrayOfID.length > 0) { //? обновление массива при смене дня
-        if (hours === 0 && minutes >= 0 && minutes <= 5) { //? проверка времени 00:00 - 00:05, в этом интервале обновим массив
-            arrayOfID = [];
-            bot.sendMessage(chatId, 'Массив с ID обновлён.')
-        }
+    if (hours === 0 && minutes >= 0 && minutes <= 5) { //? проверка времени 00:00 - 00:05, в этом интервале обновим массив
+        arrayOfOrders = []; //? обновление массива при смене дня
+        bot.sendMessage(chatId, 'Массив с ID обновлён.')
     };
 
     try {
-        const response = await axiosInstance.get('orders?flag=0&dateFrom=' + date)//? запрос от WB
+        const response = await ordersAPI(date)//? запрос от WB
 
-        arrayOfID = await saveAndSendOrders(await response.data, arrayOfID, chatId, translateOrders)
+        arrayOfOrders = await saveAndSendOrders(await response, arrayOfOrders, chatId, translateOrders) //? Присваиваем массиву полученные заказы
     } catch (error) {
+        console.log(error)
         stopInterval(); //? Остановка интервала при появлении ошибки
-        if (!!error.response.status) {
+        if (!!error?.response?.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
-                case 401:
-                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText)
-                    break;
-                case 429:
-                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText)
+                case 408:
+                    setTimeout(() => {
+                        startInterval(chatId, stopInterval)
+                    }, 600000);
+                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 10 минут!')
                     break;
                 default:
                     bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))
@@ -44,4 +43,10 @@ const getOrdersTiming = async (chatId, stopInterval) => { //! Обработчи
     }
 };
 
+const getArrayOfOrders = () => {
+    console.log('returned')
+    return arrayOfOrders;
+}
+
 module.exports.getOrdersTiming = getOrdersTiming;
+module.exports.getArrayOfOrders = getArrayOfOrders;

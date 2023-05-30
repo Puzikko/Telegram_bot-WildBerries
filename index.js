@@ -35,9 +35,9 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
 	${textFromServer}`)
     };
     try {
-        if (text === "/start" || text === "/start" + botName) {
+        if (text === "/start" || text === "/start" + botName) { //TODO Запуск интервальной функции
             if (!getIntervalStatus()) {
-                startInterval(chatId, stopInterval);
+                startInterval(chatId, stopInterval, startInterval);
                 bot.sendMessage(chatId, 'Interval запущен.');
             } else {
                 bot.sendMessage(chatId, 'Interval всё ещё работает.');
@@ -48,7 +48,7 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
     }
 
-    if (text === "/stop" || text === "/stop" + botName) {
+    if (text === "/stop" || text === "/stop" + botName) { //TODO Остановка интервальной функции
 
         if (getIntervalStatus()) {
             stopInterval();
@@ -59,7 +59,7 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     };
 
     try {
-        if (text === "/orders" || text === "/orders" + botName) {
+        if (text === "/orders" || text === "/orders" + botName) { //TODO Выдать информацию о заказах
             buttonsWithDate(chatId, [today, yesterday]);
         };
     } catch (error) {
@@ -67,7 +67,7 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     }
 
     try {
-        if (text === "/incomes" || text === "/incomes" + botName) {
+        if (text === "/incomes" || text === "/incomes" + botName) { //TODO Выдать информацию о поставках
             getIncomes(chatId, today);
         };
     } catch (error) {
@@ -75,7 +75,7 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     }
 
     try {
-        if (text === "/stocks" || text === "/stocks" + botName) {
+        if (text === "/stocks" || text === "/stocks" + botName) { //TODO Выдать информацию о складах
             getStocks(chatId, today);
         };
     } catch (error) {
@@ -83,15 +83,15 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
     }
 
     try {
-        if (text === "/sales" || text === "/sales" + botName) {
+        if (text === "/sales" || text === "/sales" + botName) { //TODO Выдать информацию о продажах
             getSales(chatId, today);
         };
     } catch (error) {
         bot.sendMessage(chatId, 'Что-то пошло не так в index.js') //? в случае ошибки отправляет сообщение
     }
 
-    if (text === "/test" || text === "/test" + botName) { //! блок с кнопками inlineButton в сообщении (в разработке)
-        test(chatId, [today, yesterday]);
+    if (text === "/test" || text === "/test" + botName) { //TODO Команда для тестовых функций
+        test(chatId);
     };
 });
 
@@ -105,11 +105,14 @@ bot.on('callback_query', async msg => { //! обработка команд с �
     const chatId = msg.message.chat.id; //? ID чата откуда его вызвали
 
     try {
-        if (textCBQ === today) {
+        if (textCBQ === today) { //? при нажатии кнопки "Сегодня"
             getOrders(chatId, today);
         };
-        if (textCBQ === yesterday) {
+        if (textCBQ === yesterday) { //? при нажатии кнопки "Вчера"
             getOrders(chatId, yesterday);
+        };
+        if (textCBQ === 'ordersAtInterval') { //? при нажатии 3-ей кнопки
+            getOrders(chatId, today, true);
         };
     } catch (error) {
         console.log(error)

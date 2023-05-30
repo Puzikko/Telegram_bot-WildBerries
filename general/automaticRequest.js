@@ -4,7 +4,7 @@ let interval = undefined; //? переменная для инициализац
 let isWorking = false; //? проверка на работу интервала
 
 const startInterval = (chatId, stopInterval) => {
-    if(isWorking) return;
+    if (isWorking) return;
     getOrdersTiming(chatId, stopInterval);
     interval = setInterval(() => { //? Установка интервала для переодичного вызова ф-ии
         const parse = Date.parse(new Date); //? переводим дату в мс
@@ -16,7 +16,7 @@ const startInterval = (chatId, stopInterval) => {
 }
 
 const stopInterval = () => {
-    if(!isWorking) return;
+    if (!isWorking) return;
     clearInterval(interval);
     isWorking = false;
 }

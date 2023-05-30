@@ -8,8 +8,9 @@ const buttonsWithDate = (chatId, arrayOfDates = []) => { //! блок с inline_
 	const button = {
 		reply_markup: JSON.stringify({ //? преобразуем в JSON-формат 
 			inline_keyboard: [
-				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: arrayOfDates[0] }, //? первая кнопка
-				{ text: 'Вчера: ' + arrayOfDates[1], callback_data: arrayOfDates[1] }] //? вторая кнопка
+				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: arrayOfDates[0] }, //? 1-ая кнопка
+				{ text: 'Вчера: ' + arrayOfDates[1], callback_data: arrayOfDates[1] }], //? 2-ая кнопка
+				[{ text: 'Информация из интервальной функции', callback_data: 'ordersAtInterval' }] //? 3-я кнопка
 			]
 		})
 	}
@@ -19,21 +20,26 @@ const buttonsWithDate = (chatId, arrayOfDates = []) => { //! блок с inline_
 
 const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
 	if (orders.length === 0) return arrID;
-	let copyOrdersOrId = [...orders.map(x => x.odid)]; //? копирует массив ID с вновь прибывшими заказами
+	let copyOfOrdersID = [...arrID.map(x => x.odid)]; //? копирует массив ID с имеющимися заказами
 
-	const filteringArray = copyOrdersOrId.filter(x => { //? отфильтровывается в новый массив уникальный ID
-		if (arrID.includes(x) === false) return x //? если такого ID не было записано
-	})
-
-	const filteringOrders = orders.filter((x, i) => { //? отфильтровывается в новый массив объекты заказа
-		if (arrID.includes(x.odid) === false) {
-			return { ...transformArray([x])[0] }; //? если такого ID не было записано
+	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
+		if (copyOfOrdersID.includes(x.odid) === false) {
+			return x; //? если такого ID не было записано
 		}
 	})
-	awaitResolve(chatId, filteringOrders, arrID.length, translateOrders)//? кастомная функция для отправки сообщений последовательно
 
-	return [...arrID, ...filteringArray]; //? возврат нового массива с ID
+	filteringOrders.sort((a, b) => { //? Сортировка массива по возрастанию
+		return Date.parse(a.date) - Date.parse(b.date); //? переводим даты и время в мс и сравниваем
+	});
+
+	const transformedOrders = transformArray(filteringOrders.map(x => { //? трансформируем объект в нужный формат
+		return JSON.parse(JSON.stringify(x)) //! передаём копию объекта (иначе изменит объект заказа в filteringOrders)
+	}));
+	awaitResolve(chatId, transformedOrders, arrID.length, translateOrders)//? кастомная функция для отправки сообщений последовательно
+	return [...arrID, ...filteringOrders]; //? возврат нового массива с ID
 }
+
+
 
 const transformArray = (response = []) => {
 	return response.map(obj => {
@@ -67,8 +73,8 @@ const translateOrders = {
 	subject: 'Предмет',
 	category: 'Категория',
 	brand: 'Бренд',
-	isCancel: 'Отмена заказа',
-	cancel_dt: 'Дата и время отмены заказа',
+	isCancel: 'Отмена заказа ❌',
+	cancel_dt: '📅 🕔 отмены заказа',
 	gNumber: 'Номер заказа',
 	sticker: 'Цифровое значение стикера',
 	srid: 'Уникальный идентификатор заказа',
