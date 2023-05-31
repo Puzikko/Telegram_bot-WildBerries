@@ -24,7 +24,6 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval) => { //! О�
 
         arrayOfOrders = await saveAndSendOrders(await response, arrayOfOrders, chatId, translateOrders) //? Присваиваем массиву полученные заказы
     } catch (error) {
-        console.log(error)
         stopInterval(); //? Остановка интервала при появлении ошибки
         if (!!error?.response?.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
@@ -44,7 +43,6 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval) => { //! О�
 };
 
 const getArrayOfOrders = () => {
-    console.log('returned')
     return arrayOfOrders;
 }
 

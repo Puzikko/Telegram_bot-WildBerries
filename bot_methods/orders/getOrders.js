@@ -16,8 +16,6 @@ const getOrders = async (chatId, date, infoFromInterval = false) => { //! Обр
             response = await ordersAPI(date, 1)//? запрос от WB
         }
 
-        console.log(response)
-
         const arrayOfOrders = await transformArray(response);
 
         if (arrayOfOrders.length > 0) {
