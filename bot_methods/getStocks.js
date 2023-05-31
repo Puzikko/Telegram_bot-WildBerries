@@ -18,7 +18,7 @@ const getStocks = async (chatId, date) => { //! Обработчик склад�
     });
 
     if (arrayOfStocks.length > 0) {
-        awaitResolve(chatId, arrayOfStocks, translateStocks)//? кастомная функция для отправки сообщений последовательно
+        awaitResolve(chatId, arrayOfStocks, 0, translateStocks)//? кастомная функция для отправки сообщений последовательно
     } else { bot.sendMessage(chatId, 'На сегодня информации о складах нет.') };
 };
 

@@ -4,13 +4,27 @@ const TelegramApi = require("node-telegram-bot-api");
 
 const bot = new TelegramApi(token);
 
-const buttonsWithDate = (chatId, arrayOfDates = []) => { //! блок с inline_buttons для запроса заказов на сегодня или вчера
+const buttonsWithDateOrders = (chatId, arrayOfDates = []) => { //! блок с inline_buttons для запроса заказов на сегодня или вчера
 	const button = {
 		reply_markup: JSON.stringify({ //? преобразуем в JSON-формат 
 			inline_keyboard: [
-				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: arrayOfDates[0] }, //? 1-ая кнопка
-				{ text: 'Вчера: ' + arrayOfDates[1], callback_data: arrayOfDates[1] }], //? 2-ая кнопка
-				[{ text: 'Информация из интервальной функции', callback_data: 'ordersAtInterval' }] //? 3-я кнопка
+				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: ['orders', arrayOfDates[0]].join('|') }, //? 1-ая кнопка
+				{ text: 'Вчера: ' + arrayOfDates[1], callback_data: ['orders', arrayOfDates[1]].join('|') }], //? 2-ая кнопка
+				[{ text: 'Информация из интервальной функции', callback_data: ['ordersAtInterval'].join('|') }] //? 3-я кнопка
+			]
+		})
+	}
+
+	bot.sendMessage(chatId, 'Выберете дату:', button)
+};
+
+const buttonsWithDateSales = (chatId, arrayOfDates = []) => { //! блок с inline_buttons для запроса продаж или ABC-нализа
+	const button = {
+		reply_markup: JSON.stringify({ //? преобразуем в JSON-формат 
+			inline_keyboard: [
+				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: ['sales', arrayOfDates[0]].join('|') }], //? 1-ая кнопка				
+				[{ text: 'ABC-анализ за текущий месяц', callback_data: ['salesABCanalysis', arrayOfDates[1]].join('|') }], //? 2-ая кнопка
+				[{ text: 'ABC-анализ за прошлый месяц', callback_data: ['salesABCanalysis', arrayOfDates[2]].join('|') }] //? 2-ая кнопка
 			]
 		})
 	}
@@ -19,8 +33,8 @@ const buttonsWithDate = (chatId, arrayOfDates = []) => { //! блок с inline_
 };
 
 const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
-	if (orders.length === 0) return arrID;
-	let copyOfOrdersID = [...arrID.map(x => x.odid)]; //? копирует массив ID с имеющимися заказами
+	if (orders.length === arrID.length) return arrID;
+	let copyOfOrdersID = arrID.map(x => x.odid); //? копирует массив ID с имеющимися заказами
 
 	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
 		if (copyOfOrdersID.includes(x.odid) === false) {
@@ -83,4 +97,5 @@ const translateOrders = {
 module.exports.translateOrders = translateOrders;
 module.exports.transformArray = transformArray;
 module.exports.saveAndSendOrders = saveAndSendOrders;
-module.exports.buttonsWithDate = buttonsWithDate;
+module.exports.buttonsWithDateOrders = buttonsWithDateOrders;
+module.exports.buttonsWithDateSales = buttonsWithDateSales;

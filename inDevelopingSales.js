@@ -30846,3 +30846,64 @@ const arrayOfSales = [
 	}
 ] //? 995
 
+/*
+{
+		"date": "2023-05-30T20:39:55",
+		"lastChangeDate": "2023-05-31T02:49:11",
+		"supplierArticle": "кистьдуофибра",
+		"techSize": "0",
+		"barcode": "2037758067397",
+		"totalPrice": 650,
+		"discountPercent": 0,
+		"isSupply": false,
+		"isRealization": true,
+		"promoCodeDiscount": 0,
+		"warehouseName": "Коледино",
+		"countryName": "Россия",
+		"oblastOkrugName": "Центральный федеральный округ",
+		"regionName": "Москва",
+		"incomeID": 0,
+		"saleID": "S5445034196",
+		"odid": 9002915864183,
+		"spp": 0,
+		"forPay": 472.97,  //? WB перечисляет продавцу
+		"finishedPrice": 508,
+		"priceWithDisc": 585,
+		"nmId": 158986691,
+		"subject": "Кисти косметические",
+		"category": "Красота",
+		"brand": "BELITA-VITEX",
+		"IsStorno": 0,
+		"gNumber": "2987941045489894212",
+		"sticker": "11885168986",
+		"srid": "23184648077495353.0.0"
+	}
+*/
+const newObj = {};
+const newArrayOfArticles = [] //? массив для артикулов
+
+arrayOfSales.map(x => {
+	if (!newArrayOfArticles.includes(x.nmId)) { //? Если нет такого ID
+		newArrayOfArticles.push(x.nmId) //? тогда пушим его в массив
+	}
+})
+
+for (let i = 0; i < newArrayOfArticles.length; i++) {
+	const title = newArrayOfArticles[i];
+	newObj[title] = arrayOfSales.filter(x => x.nmId === title); //? записываем в новый массив каждый заказ по своему артикулу
+};
+
+const result = Object.keys(newObj).map(x => {
+	const arrayOfSalesById = newObj[x];
+	return { //? в другой объект для каждого артикула считаем общее кол-во продаж и выплат
+		nmId: x,
+		supplierArticle: arrayOfSalesById[0].supplierArticle,
+		category: arrayOfSalesById[0].category,
+		subject: arrayOfSalesById[0].subject,
+		brand: arrayOfSalesById[0].brand,
+		totalSales: arrayOfSalesById.length,
+		forPay: arrayOfSalesById.map(x => x.forPay).reduce((acc, cur) => acc + cur, 0)
+	}
+})
+
+console.log(newObj)

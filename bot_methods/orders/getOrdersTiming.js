@@ -43,7 +43,7 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval) => { //! ÐžÐ
 };
 
 const getArrayOfOrders = () => {
-    return arrayOfOrders;
+    return [...arrayOfOrders];
 }
 
 module.exports.getOrdersTiming = getOrdersTiming;

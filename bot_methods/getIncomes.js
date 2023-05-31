@@ -12,7 +12,7 @@ const getIncomes = async (chatId, date) => { //! Обработчик поста
     const arrayOfIncomes = await response.data; //? Обработка респонса
 
     if (arrayOfIncomes.length > 0) {
-        awaitResolve(chatId, arrayOfIncomes, translateIncomes)//? кастомная функция для отправки сообщений последовательно
+        awaitResolve(chatId, arrayOfIncomes, 0, translateIncomes)//? кастомная функция для отправки сообщений последовательно
     } else { bot.sendMessage(chatId, 'На сегодня никаких поставок нет.') }
 };
 
