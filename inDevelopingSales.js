@@ -30879,31 +30879,14 @@ const arrayOfSales = [
 		"srid": "23184648077495353.0.0"
 	}
 */
-const newObj = {};
-const newArrayOfArticles = [] //? массив для артикулов
 
-arrayOfSales.map(x => {
-	if (!newArrayOfArticles.includes(x.nmId)) { //? Если нет такого ID
-		newArrayOfArticles.push(x.nmId) //? тогда пушим его в массив
-	}
-})
+const date = '2023-04-30T20:39:55'
+const parse = Date.parse(new Date)
+const dateNow = new Date(parse + 10800000)
 
-for (let i = 0; i < newArrayOfArticles.length; i++) {
-	const title = newArrayOfArticles[i];
-	newObj[title] = arrayOfSales.filter(x => x.nmId === title); //? записываем в новый массив каждый заказ по своему артикулу
-};
+let newArrayOfArticles = [] //? массив для артикулов
 
-const result = Object.keys(newObj).map(x => {
-	const arrayOfSalesById = newObj[x];
-	return { //? в другой объект для каждого артикула считаем общее кол-во продаж и выплат
-		nmId: x,
-		supplierArticle: arrayOfSalesById[0].supplierArticle,
-		category: arrayOfSalesById[0].category,
-		subject: arrayOfSalesById[0].subject,
-		brand: arrayOfSalesById[0].brand,
-		totalSales: arrayOfSalesById.length,
-		forPay: arrayOfSalesById.map(x => x.forPay).reduce((acc, cur) => acc + cur, 0)
-	}
-})
+newArrayOfArticles = arrayOfSales.filter(x => x.lastChangeDate.match(/\d\d\d\d-\d\d/g).join('') === date.match(/\d\d\d\d-\d\d/g).join(''))
 
-console.log(newObj)
+
+console.log(newArrayOfArticles.length)

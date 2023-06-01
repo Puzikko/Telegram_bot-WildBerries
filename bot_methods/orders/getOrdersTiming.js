@@ -29,7 +29,8 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, isWorking) =
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
                 case 408:
                     setTimeout(() => {
-                        startInterval(chatId, stopInterval, startInterval)
+                        startInterval(chatId, stopInterval, startInterval);
+                        bot.sendMessage(chatId, 'Interval снова в работе.');
                     }, 600000);
                     bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 10 минут!')
                     break;

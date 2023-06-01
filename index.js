@@ -83,25 +83,29 @@ bot.on('message', async msg => { //! Всё что приходит от бот�
 
     try {
         if (text === "/sales" || text === "/sales" + botName) { //TODO Выдать информацию о продажах
-            const thisMonth = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-01"; //? определение даты начала текущего месяца в формате ГГГГ-ММ-ДД
+            let thisMonth = undefined;
             let lastMonth = undefined;
+            let month = dateNow.getMonth() //? возврат месяца из даты
+            if (month.toString().length === 1) { //? проверка количества цифр в месяце
+                //? добавляем к месяцу '0'
+                thisMonth = dateNow.getFullYear() + "-0" + (dateNow.getMonth() + 1) + "-01"; //? определение даты начала текущего месяца в формате ГГГГ-ММ-ДД 
+            } else {
+                thisMonth = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-01"; //? определение даты начала текущего месяца в формате ГГГГ-ММ-ДД
+            }
+            month = month.toString().length === 1 ? '0' + month : month //? добавляем к месяцу '0'
             if (dateNow.getMonth() === 0) { //? для 1-го месяца (января)
-                console.log('в if')
                 lastMonth = (dateNow.getFullYear() - 1) + '-12-01'; //? определение даты начала прошлого месяца, после Нового года в формате ГГГГ-ММ-ДД
             } else {
-                lastMonth = dateNow.getFullYear() + "-" + (dateNow.getMonth()) + "-01"; //? определение даты начала прошлого месяца в формате ГГГГ-ММ-ДД
+                lastMonth = dateNow.getFullYear() + "-" + month + "-01"; //? определение даты начала прошлого месяца в формате ГГГГ-ММ-ДД
             }
             buttonsWithDateSales(chatId, [today, thisMonth, lastMonth])
-            // getSales(chatId, today);
         };
     } catch (error) {
-        console.log(error)
         bot.sendMessage(chatId, 'Что-то пошло не так в продажах index.js') //? в случае ошибки отправляет сообщение
     }
 
     if (text === "/test" || text === "/test" + botName) { //TODO Команда для тестовых функций
-        // test(chatId);
-        getSalesABCanalysis(chatId, '2023-4-30')
+        test(chatId);
     };
 });
 

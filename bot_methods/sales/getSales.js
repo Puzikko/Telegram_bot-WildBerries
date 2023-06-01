@@ -30,15 +30,13 @@ const getSales = async (chatId, date) => { //! Обработчик продаж
 
 const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик продаж -> ABC анализ
     const newObj = {};
-    const newArrayOfArticles = [] //? массив для артикулов
+    let newArrayOfArticles = [] //? массив для артикулов+
+    const regEx = /\d\d\d\d-\d\d/g; //? для сортировки даты в виде ГГГГ-ММ
 
     try {
         const response = await salesAPI(date)//? запрос на WB
-        response.map(x => {
-            if (!newArrayOfArticles.includes(x.nmId)) { //? Если нет такого ID
-                newArrayOfArticles.push(x.nmId) //? тогда пушим его в массив
-            }
-        });
+            .then(response => response.filter(x => x.lastChangeDate.match(regEx).join('') === date.match(regEx).join(''))); //? фильтруем в response только для подходящей даты
+        newArrayOfArticles = response.map(x => x.nmId); //? записываем только артикулы
 
         for (let i = 0; i < newArrayOfArticles.length; i++) {
             const title = newArrayOfArticles[i];
