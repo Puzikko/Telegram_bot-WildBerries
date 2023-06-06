@@ -15,7 +15,7 @@ const startInterval = (chatId, stopInterval, startInterval) => {
         const parse = Date.parse(new Date); //? переводим дату в мс
         const today = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
         console.log(today); //? для отслеживания в консоле сервера последние логи работы бота
-        getOrdersTiming(chatId, stopInterval, startInterval, getIntervalStatus());
+        getOrdersTiming(chatId, stopInterval, startInterval, setIsWorkingTrue, getIntervalStatus());
     }, 300000);
 };
 
