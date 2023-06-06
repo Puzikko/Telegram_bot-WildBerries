@@ -7,7 +7,7 @@ const { saveAndSendOrders } = require('./commons');
 const bot = new TelegramApi(token);
 let arrayOfOrders = [];
 
-const getOrdersTiming = async (chatId, stopInterval, startInterval, isWorking) => { //! Обработчик заказов
+const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorkingTrue, isWorking) => { //! Обработчик заказов
     if (!isWorking) return;
     const parse = Date.parse(new Date); //? переводим дату в мс
     const today = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
@@ -20,7 +20,14 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, isWorking) =
         bot.sendMessage(chatId, 'Массив с ID обновлён.')
     };
     try {
-        const response = await ordersAPI(date)//? запрос от WB
+        const promiseOrdersFlag0 = await ordersAPI(date)//? запрос на WB с flag = 0
+            .then(response => response.filter(order => order.isCancel))
+        const promiseOrdersFlag1 = await ordersAPI(date, 1)//? запрос на WB с flag = 1
+
+        const response = await Promise.all([ //? выполняем оба запроса
+            promiseOrdersFlag0,
+            promiseOrdersFlag1
+        ]).then(array => array[0].concat(array[1])) //? объединяем два полученных массива
 
         arrayOfOrders = await saveAndSendOrders(await response, arrayOfOrders, chatId, translateOrders) //? Присваиваем массиву полученные заказы
     } catch (error) {
@@ -28,11 +35,12 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, isWorking) =
         if (!!error?.response?.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
                 case 408:
+                    setIsWorkingTrue();
                     setTimeout(() => {
                         startInterval(chatId, stopInterval, startInterval);
                         bot.sendMessage(chatId, 'Interval снова в работе.');
-                    }, 600000);
-                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 10 минут!')
+                    }, 1200000);
+                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
                     break;
                 default:
                     bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))

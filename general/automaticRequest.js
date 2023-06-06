@@ -6,7 +6,7 @@ let isWorking = false; //? проверка на работу интервала
 const startInterval = (chatId, stopInterval, startInterval) => {
     if (isWorking) return;
     isWorking = true;
-    getOrdersTiming(chatId, stopInterval, startInterval, true);
+    getOrdersTiming(chatId, stopInterval, startInterval, setIsWorkingTrue, true);
     interval = setInterval(() => { //? Установка интервала для переодичного вызова ф-ии
         if (!isWorking) {
             clearInterval(interval);
@@ -17,17 +17,21 @@ const startInterval = (chatId, stopInterval, startInterval) => {
         console.log(today); //? для отслеживания в консоле сервера последние логи работы бота
         getOrdersTiming(chatId, stopInterval, startInterval, getIntervalStatus());
     }, 300000);
-}
+};
 
 const stopInterval = () => {
     if (!isWorking) return;
     clearInterval(interval);
     isWorking = false;
-}
+};
+
+const setIsWorkingTrue = () => {
+    isWorking = true;
+};
 
 const getIntervalStatus = () => {
     return isWorking;
-}
+};
 
 module.exports.startInterval = startInterval;
 module.exports.stopInterval = stopInterval;

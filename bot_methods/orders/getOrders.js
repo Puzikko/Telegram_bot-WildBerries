@@ -7,7 +7,7 @@ const { getArrayOfOrders } = require('./getOrdersTiming');
 
 const bot = new TelegramApi(token);
 
-const getOrders = async (chatId, date, infoFromInterval = false) => { //! Обработчик заказов
+const getOrders = async (chatId, date, infoFromInterval = false, isCancel = false) => { //! Обработчик заказов
     let response = undefined;
     try {
         if (infoFromInterval) {
