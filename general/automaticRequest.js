@@ -8,7 +8,7 @@ const startInterval = (chatId, stopInterval, startInterval) => {
     isWorking = true;
     getOrdersTiming(chatId, stopInterval, startInterval, setIsWorkingTrue, true);
     interval = setInterval(() => { //? Установка интервала для переодичного вызова ф-ии
-        if (!isWorking) {
+        if (!getIntervalStatus()) {
             clearInterval(interval);
             return;
         }

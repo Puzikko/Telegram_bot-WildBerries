@@ -21,7 +21,7 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
     };
     try {
         const promiseOrdersFlag0 = await ordersAPI(date)//? запрос на WB с flag = 0
-            .then(response => response.filter(order => order.isCancel))
+            .then(response => response.filter(order => order.isCancel)); //? отфильтровываем заказы с отменой isCancel = true
         const promiseOrdersFlag1 = await ordersAPI(date, 1)//? запрос на WB с flag = 1
 
         const response = await Promise.all([ //? выполняем оба запроса
@@ -41,6 +41,11 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
                         bot.sendMessage(chatId, 'Interval снова в работе.');
                     }, 1200000);
                     bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
+                    break;
+                case 429:
+                    setTimeout(() => {
+                        startInterval(chatId, stopInterval, startInterval);
+                    }, 60000);
                     break;
                 default:
                     bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))

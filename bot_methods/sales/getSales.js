@@ -43,8 +43,8 @@ const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик �
             newObj[title] = response.filter(x => x.nmId === title); //? записываем в новый массив каждый заказ по своему артикулу
         };
 
-        const arrayOfSalesABC = Object.keys(newObj).map(x => {
-            const arrayOfSalesById = newObj[x];
+        let arrayOfSalesABC = Object.keys(newObj).map(x => {
+            const arrayOfSalesById = newObj[x]; //? массив всех заказов по собранных по артикулу
             return { //? в другой объект для каждого артикула считаем общее кол-во продаж и выплат
                 nmId: x,
                 supplierArticle: arrayOfSalesById[0].supplierArticle,
@@ -52,15 +52,36 @@ const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик �
                 subject: arrayOfSalesById[0].subject,
                 brand: arrayOfSalesById[0].brand,
                 totalSales: arrayOfSalesById.length,
-                forPay: arrayOfSalesById.map(x => x.forPay).reduce((acc, cur) => acc + cur, 0)
+                forPay: +arrayOfSalesById.map(x => x.forPay) //? сразу же переводим в числовое значение
+                    .reduce((acc, cur) => acc + cur, 0) //? складываем все выплаты
+                    .toFixed(2) //? округляем до сотых
             }
         });
 
+        const allSales = arrayOfSalesABC.reduce((acc, cur) => acc + cur.totalSales, 0)
+        const allPayments = arrayOfSalesABC.reduce((acc, cur) => acc + cur.forPay, 0)
+        arrayOfSalesABC = arrayOfSalesABC.map(x => {
+            return {
+                nmId: x.nmId,
+                supplierArticle: x.supplierArticle,
+                category: x.category,
+                subject: x.subject,
+                brand: x.brand,
+                totalSales: x.totalSales,
+                proportionOfSales: +(x.totalSales / allSales * 100).toFixed(2),
+                forPay: x.forPay,
+                proportionOfPayments: +(x.forPay / allPayments * 100).toFixed(2)
+            }
+        })
+
+        arrayOfSalesABC.sort((a, b) => { //? сортировка массива
+            return b.totalSales - a.totalSales //? по убыванию
+        })
         if (arrayOfSalesABC.length > 0) {
-            awaitResolve(chatId, arrayOfSalesABC, 0, translateSales, 20)//? кастомная функция для отправки сообщений последовательно
+            awaitResolve(chatId, arrayOfSalesABC, 0, translateSales, 15)//? кастомная функция для отправки сообщений последовательно
         };
     } catch (error) {
-        bot.sendMessage(chatId, 'Error:  ' + error.response.data.errors.join('\n'))
+        bot.sendMessage(chatId, 'Error:  ' + error?.response?.data.errors.join('\n'))
     };
 };
 
@@ -99,4 +120,6 @@ const translateSales = {
     srid: 'Уникальный идентификатор заказа',
     totalSales: '🛒 Продано',
     forPay: '💵 К выплате',
+    proportionOfSales: '🔤 Доля продаж, %',
+    proportionOfPayments: '🔤 Доля выплат, %',
 };
