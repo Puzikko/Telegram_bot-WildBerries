@@ -7,7 +7,7 @@ const { saveAndSendOrders } = require('./commons');
 const bot = new TelegramApi(token);
 let arrayOfOrders = [];
 
-const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorkingTrue, isWorking) => { //! Обработчик заказов
+const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking, isWorking) => { //! Обработчик заказов
     if (!isWorking) return;
     const parse = Date.parse(new Date); //? переводим дату в мс
     const today = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
@@ -35,8 +35,9 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
         if (!!error?.response?.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
                 case 408:
-                    setIsWorkingTrue();
+                    setIsWorking(true);
                     setTimeout(() => {
+                        setIsWorking(false);
                         startInterval(chatId, stopInterval, startInterval);
                         bot.sendMessage(chatId, 'Interval снова в работе.');
                     }, 1200000);

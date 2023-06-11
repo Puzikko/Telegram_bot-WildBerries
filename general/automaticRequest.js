@@ -5,8 +5,8 @@ let isWorking = false; //? проверка на работу интервала
 
 const startInterval = (chatId, stopInterval, startInterval) => {
     if (isWorking) return;
-    isWorking = true;
-    getOrdersTiming(chatId, stopInterval, startInterval, setIsWorkingTrue, true);
+    setIsWorking(true);
+    getOrdersTiming(chatId, stopInterval, startInterval, setIsWorking, true);
     interval = setInterval(() => { //? Установка интервала для переодичного вызова ф-ии
         if (!getIntervalStatus()) {
             clearInterval(interval);
@@ -15,7 +15,7 @@ const startInterval = (chatId, stopInterval, startInterval) => {
         const parse = Date.parse(new Date); //? переводим дату в мс
         const today = new Date(parse + 10800000); //? добавляем 3 часа в мс и возвращаем в виде даты
         console.log(today); //? для отслеживания в консоле сервера последние логи работы бота
-        getOrdersTiming(chatId, stopInterval, startInterval, setIsWorkingTrue, getIntervalStatus());
+        getOrdersTiming(chatId, stopInterval, startInterval, setIsWorking, getIntervalStatus());
     }, 300000);
 };
 
@@ -25,8 +25,8 @@ const stopInterval = () => {
     isWorking = false;
 };
 
-const setIsWorkingTrue = () => {
-    isWorking = true;
+const setIsWorking = (setting) => {
+    isWorking = setting;
 };
 
 const getIntervalStatus = () => {
