@@ -17,7 +17,7 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
     console.log(hours, minutes)
     if (hours === 0 && minutes >= 0 && minutes <= 5) { //? проверка времени 00:00 - 00:05, в этом интервале обновим массив
         arrayOfOrders = []; //? обновление массива при смене дня
-        bot.sendMessage(chatId, 'Массив с ID обновлён.')
+        // bot.sendMessage(chatId, 'Массив с ID обновлён.')
     };
     try {
         const promiseOrdersFlag0 = await ordersAPI(date)//? запрос на WB с flag = 0
@@ -39,9 +39,9 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
                     setTimeout(() => {
                         setIsWorking(false);
                         startInterval(chatId, stopInterval, startInterval);
-                        bot.sendMessage(chatId, 'Interval снова в работе.');
+                        // bot.sendMessage(chatId, 'Interval снова в работе.');
                     }, 1200000);
-                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
+                    // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
                     break;
                 case 429:
                     setTimeout(() => {
