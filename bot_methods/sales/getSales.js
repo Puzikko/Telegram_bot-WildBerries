@@ -2,6 +2,7 @@ const TelegramApi = require("node-telegram-bot-api");
 const { token } = require("../../env");
 const { awaitResolve } = require("../../general/awaitResolve");
 const { salesAPI } = require("../../api/axios_instance");
+const { exportAtGoogleSheet } = require('./exportAtGoogleSheet');
 
 const bot = new TelegramApi(token);
 
@@ -77,9 +78,29 @@ const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик �
         arrayOfSalesABC.sort((a, b) => { //? сортировка массива
             return b.totalSales - a.totalSales //? по убыванию
         })
-        if (arrayOfSalesABC.length > 0) {
-            awaitResolve(chatId, arrayOfSalesABC, 0, translateSales, 15)//? кастомная функция для отправки сообщений последовательно
-        };
+
+        spreadSheetArrayOfSalesABC = arrayOfSalesABC.map(x => { //? для правильной записи в гугл таблицы нужно все ключи переименовать
+            return {
+                'Артикул WB': x.nmId,
+                'Артикул продавца': x.supplierArticle,
+                'Категория': x.category,
+                'Предмет': x.subject,
+                'Бренд': x.brand,
+                'Продано': x.totalSales,
+                'Доля продаж, %': x.proportionOfSales,
+                'К выплате': x.forPay,
+                'Доля выплат, %': x.proportionOfPayments
+            }
+        })
+
+        const sheetID = await exportAtGoogleSheet(spreadSheetArrayOfSalesABC); //? отправляем переименованный массив и возвращаем ID нового листа с информацией
+        const link = `https://docs.google.com/spreadsheets/d/19VPbIPuhK2ZJW0HKPqbqCNKueSVUDBxxzoclH6d7_PM/edit#gid=${sheetID}` //? готовим ссылку на лист
+
+        bot.sendMessage(chatId, link)
+
+        // if (arrayOfSalesABC.length > 0) {
+        //     awaitResolve(chatId, arrayOfSalesABC, 0, translateSales, 15)//? кастомная функция для отправки сообщений последовательно
+        // };
     } catch (error) {
         bot.sendMessage(chatId, 'Error:  ' + error?.response?.data.errors.join('\n'))
     };
