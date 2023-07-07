@@ -1,2 +1,4 @@
 /node_modules
 env.js
+client_secret_GOOGLE CLOUD.json
+googleSheets_apiKey.json
