@@ -33,6 +33,7 @@ const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик �
     const newObj = {};
     let newArrayOfArticles = [] //? массив для артикулов+
     const regEx = /\d\d\d\d-\d\d/g; //? для сортировки даты в виде ГГГГ-ММ
+    let totalOfProportion = 0;
 
     try {
         const response = await salesAPI(date)//? запрос на WB
@@ -69,9 +70,9 @@ const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик �
                 subject: x.subject,
                 brand: x.brand,
                 totalSales: x.totalSales,
-                proportionOfSales: +(x.totalSales / allSales * 100).toFixed(2),
+                // proportionOfSales: +(x.totalSales / allSales * 100).toFixed(2),
                 forPay: x.forPay,
-                proportionOfPayments: +(x.forPay / allPayments * 100).toFixed(2)
+                proportionOfPayments: +(x.forPay / allPayments * 100).toFixed(2),
             }
         })
 
@@ -87,21 +88,25 @@ const getSalesABCanalysis = async (chatId, date) => { //! Обрабочтик �
                 'Предмет': x.subject,
                 'Бренд': x.brand,
                 'Продано': x.totalSales,
-                'Доля продаж, %': x.proportionOfSales,
+                // 'Доля продаж, %': x.proportionOfSales,
                 'К выплате': x.forPay,
-                'Доля выплат, %': x.proportionOfPayments
+                'Доля выплат, %': x.proportionOfPayments,
+                'Совокупный %': totalOfProportion += x.proportionOfPayments,
+                'ABC': totalOfProportion < 80 ? 'A' :
+                    totalOfProportion >= 95 ? 'C' : 'B'
             }
         })
 
         const sheetID = await exportAtGoogleSheet(spreadSheetArrayOfSalesABC); //? отправляем переименованный массив и возвращаем ID нового листа с информацией
         const link = `https://docs.google.com/spreadsheets/d/19VPbIPuhK2ZJW0HKPqbqCNKueSVUDBxxzoclH6d7_PM/edit#gid=${sheetID}` //? готовим ссылку на лист
 
-        bot.sendMessage(chatId, link)
+        bot.sendMessage(chatId, link, { disable_web_page_preview: true })
 
         // if (arrayOfSalesABC.length > 0) {
         //     awaitResolve(chatId, arrayOfSalesABC, 0, translateSales, 15)//? кастомная функция для отправки сообщений последовательно
         // };
     } catch (error) {
+        console.log(error)
         bot.sendMessage(chatId, 'Error:  ' + error?.response?.data.errors.join('\n'))
     };
 };
