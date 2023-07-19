@@ -10,12 +10,12 @@ const buttonsWithDateOrders = (chatId, arrayOfDates = []) => { //! блок с i
 			inline_keyboard: [
 				[{ text: 'Сегодня: ' + arrayOfDates[0], callback_data: ['orders', arrayOfDates[0]].join('|') }, //? 1-ая кнопка
 				{ text: 'Вчера: ' + arrayOfDates[1], callback_data: ['orders', arrayOfDates[1]].join('|') }], //? 2-ая кнопка
-				[{ text: 'Информация из интервальной функции', callback_data: ['ordersAtInterval'].join('|') }] //? 3-я кнопка
+				// [{ text: 'Информация из интервальной функции', callback_data: ['ordersAtInterval'].join('|') }] //? 3-я кнопка
 			]
 		})
 	}
 
-	bot.sendMessage(chatId, 'Выберете дату:', button)
+	bot.sendMessage(chatId, 'Выберите дату:', button)
 };
 
 const buttonsWithDateSales = (chatId, arrayOfDates = []) => { //! блок с inline_buttons для запроса продаж или ABC-нализа
@@ -29,7 +29,7 @@ const buttonsWithDateSales = (chatId, arrayOfDates = []) => { //! блок с in
 		})
 	}
 
-	bot.sendMessage(chatId, 'Выберете дату:', button)
+	bot.sendMessage(chatId, 'Выберите дату:', button)
 };
 
 const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
