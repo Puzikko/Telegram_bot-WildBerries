@@ -22,7 +22,8 @@ const getOrders = async (chatId, date, infoFromInterval = false, isCancel = fals
             awaitResolve(chatId, arrayOfOrders, 0, translateOrders)//? кастомная функция для отправки сообщений последовательно
         } else { bot.sendMessage(chatId, 'За выбранную дату никаких заказов нет.') }
     } catch (error) {
-        bot.sendMessage(chatId, 'Error:  ' + error?.response?.data?.errors.join('\n'))
+        console.log(error.response.data)
+        // bot.sendMessage(chatId, 'Error:  ' + error?.response?.data?.errors.join('\n'))
     }
 };
 
