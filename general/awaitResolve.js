@@ -5,7 +5,7 @@ const { messageConstructor } = require("./messageConstructor")
 
 const bot = new TelegramApi(token);
 
-const awaitResolve = async (chatId, array, serNumber, translateObject, messageСontent = 5) => { //! Отправка сообщений по порядку
+const awaitResolve = async (chatId, array, serNumber, translateObject, messageСontent = 8) => { //! Отправка сообщений по порядку
 
     let text = new String;
     for (let i = 1; i <= array.length; i++) {

@@ -59,13 +59,20 @@ const transformArray = (response = []) => {
 	return response.map(obj => {
 		delete obj.lastChangeDate; //?vvv
 		delete obj.incomeID;
+		delete obj.countryName;
+		delete obj.oblastOkrugName;
+		delete obj.regionName;
+		delete obj.isSupply;
+		delete obj.isRealization;
+		delete obj.spp;
+		delete obj.priceWithDisc;
 		delete obj.odid;
 		delete obj.gNumber;
 		delete obj.sticker;
 		delete obj.srid;
 		if (obj.isCancel === false) {
 			delete obj.isCancel;
-			delete obj.cancel_dt;
+			delete obj.cancelDate;
 		} //? ^^^^^^ удаление указанных ключей со свойствами
 		return obj; //? возврат объекта
 	});
@@ -87,8 +94,10 @@ const translateOrders = {
 	subject: 'Предмет',
 	category: 'Категория',
 	brand: 'Бренд',
+	orderType: 'Тип заказа',
+	finishedPrice: 'Цена для покупателя 💲',
 	isCancel: 'Отмена заказа ❌',
-	cancel_dt: '📅 🕔 ❌',
+	cancelDate: '📅 🕔 ❌',
 	gNumber: 'Номер заказа',
 	sticker: 'Цифровое значение стикера',
 	srid: 'Уникальный идентификатор заказа',
