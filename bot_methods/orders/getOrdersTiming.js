@@ -20,17 +20,23 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
         // bot.sendMessage(chatId, 'Массив с ID обновлён.')
     };
     try {
-        const promiseOrdersFlag0 = await ordersAPI(date)//? запрос на WB с flag = 0
-            .then(response => response.filter(order => order.isCancel)); //? отфильтровываем заказы с отменой isCancel = true
+        // const promiseOrdersFlag0 = await ordersAPI(date)//? запрос на WB с flag = 0
+        //     .then(response => response.filter(order => order.isCancel)); //? отфильтровываем заказы с отменой isCancel = true
+
         const promiseOrdersFlag1 = await ordersAPI(date, 1)//? запрос на WB с flag = 1
 
         const response = await Promise.all([ //? выполняем оба запроса
-            promiseOrdersFlag0,
+            //promiseOrdersFlag0,
             promiseOrdersFlag1
-        ]).then(array => array[0].concat(array[1])) //? объединяем два полученных массива
+        ]).then(array => {
+            return array[0]
+            // .concat(array[1])
+        }) //? объединяем два полученных массива
+        console.log(response)
 
         arrayOfOrders = await saveAndSendOrders(await response, arrayOfOrders, chatId, translateOrders) //? Присваиваем массиву полученные заказы
     } catch (error) {
+        console.log(error.response?.data)
         stopInterval(); //? Остановка интервала при появлении ошибки
         if (!!error?.response?.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
@@ -40,7 +46,7 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
                         setIsWorking(false);
                         startInterval(chatId, stopInterval, startInterval);
                         // bot.sendMessage(chatId, 'Interval снова в работе.');
-                    }, 1200000);
+                    }, 60000);
                     // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
                     break;
                 case 429:

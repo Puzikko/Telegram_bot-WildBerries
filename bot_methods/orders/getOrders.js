@@ -17,7 +17,7 @@ const getOrders = async (chatId, date, infoFromInterval = false, isCancel = fals
         }
 
         const arrayOfOrders = await transformArray(response);
-
+        console.log(arrayOfOrders)
         if (arrayOfOrders.length > 0) {
             awaitResolve(chatId, arrayOfOrders, 0, translateOrders)//? кастомная функция для отправки сообщений последовательно
         } else { bot.sendMessage(chatId, 'За выбранную дату никаких заказов нет.') }
