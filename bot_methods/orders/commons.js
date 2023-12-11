@@ -34,7 +34,7 @@ const buttonsWithDateSales = (chatId, arrayOfDates = []) => { //! блок с in
 
 const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
 	if (orders.length === arrID.length) return arrID;
-	let copyOfOrdersID = [...arrID]; //? копирует массив ID с имеющимися заказами
+	let copyOfOrdersID = arrID.map(order => order.odid); //? копирует массив ID с имеющимися заказами
 
 	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
 		if (copyOfOrdersID.includes(x.odid) === false) {
