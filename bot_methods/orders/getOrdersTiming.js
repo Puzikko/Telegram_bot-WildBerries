@@ -25,13 +25,15 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
 
         const promiseOrdersFlag1 = await ordersAPI(date, 1)//? запрос на WB с flag = 1
 
-        const response = await Promise.all([ //? выполняем оба запроса
-            //promiseOrdersFlag0,
-            promiseOrdersFlag1
-        ]).then(array => {
-            return array[0]
-            // .concat(array[1])
-        }) //? объединяем два полученных массива
+        const response = promiseOrdersFlag1;
+
+        // const response = await Promise.all([ //? выполняем оба запроса
+        //     //promiseOrdersFlag0,
+        //     promiseOrdersFlag1
+        // ]).then(array => {
+        //     return array[0]
+        //     // .concat(array[1])
+        // }) //? объединяем два полученных массива
         console.log(response)
 
         arrayOfOrders = await saveAndSendOrders(await response, arrayOfOrders, chatId, translateOrders) //? Присваиваем массиву полученные заказы
@@ -55,8 +57,8 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
                     }, 60000);
                     break;
                 default:
-                    bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))
-                    bot.sendMessage(chatId, 'Интервальная функция была автоматически остановлена.\nЧтобы запустить её снова отправьте команду:\n/start')
+                    // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))
+                    // bot.sendMessage(chatId, 'Интервальная функция была автоматически остановлена.\nЧтобы запустить её снова отправьте команду:\n/start')
                     break;
             }
         } else { bot.sendMessage(chatId, 'Что-то пошло не так в Интервале') } //? в случае ошибки отправляет сообщение
