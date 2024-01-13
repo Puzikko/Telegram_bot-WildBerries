@@ -1,22 +1,14 @@
 
 const newObject = (obj) => { //! Образование нового объекта
-    if (!obj.hasOwnProperty('totalPrice') && !obj.hasOwnProperty('discountPercent')) return obj; //? проверка на эти две позиции 
-
-    const priceWithDiscount = (obj.totalPrice * (1 - obj.discountPercent / 100)) //? Образование цены с дисконтом
-        .toFixed(2) //? Оставить два знака после запятой [5.00]
-
     let copyObj = Object.entries(obj); //? Преобразование в массив из массивов "ключ, значение" [['key', 'val']]
     copyObj = copyObj.map(arr => {
         return arr[0] === 'date'
             ? ['date', changeDateForm(obj['date'])]
             : arr
     })
-    const index1 = copyObj.findIndex((el) => el[0] === 'totalPrice'); //? Поиск нужного индекса
-    copyObj.splice(index1 + 1, 0, ['priceWithDiscount', priceWithDiscount]); //? Добавление нового массива
 
-    const index2 = copyObj.findIndex((el) => el[0] === 'date'); //? Поиск нужного индекса
-    copyObj.splice(index2 + 1, 0, ['Прошло ⏱', addTimeSinceOrder(obj['date'])]); //? Добавление нового массива
-
+    const index1 = copyObj.findIndex((el) => el[0] === 'date'); //? Поиск нужного индекса
+    copyObj.splice(index1 + 1, 0, ['⏱', addTimeSinceOrder(obj['date'])]); //? Добавление нового массива
     return Object.fromEntries(copyObj) //?  Преобразование обратно в объект
 }
 

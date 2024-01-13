@@ -22683,232 +22683,25 @@ const arrayOfOrders = [
 	}
 ] //? 1031
 
+const ordersBuffer = {
+	totalCost: 0
+};
 
-/*
-{
-		"date": "2023-04-29T10:29:57",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "aurum",
-		"techSize": "0",
-		"barcode": "2038233991626",
-		"totalPrice": 561.04,
-		"discountPercent": 23,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 5000061570204,
-		"nmId": 111632914,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "Билита",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "5033520541427737073",
-		"sticker": "11286837181",
-		"srid": "5.11740733576359698.0.0"
-	},
-*/
-
-/*
-{
-		"date": "2023-05-30T20:39:55",
-		"lastChangeDate": "2023-05-31T02:49:11",
-		"supplierArticle": "кистьдуофибра",
-		"techSize": "0",
-		"barcode": "2037758067397",
-		"totalPrice": 650,
-		"discountPercent": 0,
-		"isSupply": false,
-		"isRealization": true,
-		"promoCodeDiscount": 0,
-		"warehouseName": "Коледино",
-		"countryName": "Россия",
-		"oblastOkrugName": "Центральный федеральный округ",
-		"regionName": "Москва",
-		"incomeID": 0,
-		"saleID": "S5445034196",
-		"odid": 9002915864183,
-		"spp": 0,
-		"forPay": 472.97,  //? WB перечисляет продавцу
-		"finishedPrice": 508,
-		"priceWithDisc": 585,
-		"nmId": 158986691,
-		"subject": "Кисти косметические",
-		"category": "Красота",
-		"brand": "BELITA-VITEX",
-		"IsStorno": 0,
-		"gNumber": "2987941045489894212",
-		"sticker": "11885168986",
-		"srid": "23184648077495353.0.0"
-	}
-*/
-
-// const newArrayOfOrders = arrayOfOrders.filter(x => x.nmId === 111632914)
-
-const arrOfOrders1 = [
-	{
-		"date": "2023-04-29T10:29:57",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "aurum",
-		"techSize": "0",
-		"barcode": "2038233991626",
-		"totalPrice": 561.04,
-		"discountPercent": 23,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 5000061570204,
-		"nmId": 111632914,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "Билита",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "5033520541427737073",
-		"sticker": "11286837181",
-		"srid": "5.11740733576359698.0.0"
-	},
-	{
-		"date": "2023-04-29T13:26:25",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "гельпластырь",
-		"techSize": "0",
-		"barcode": "2037029282047",
-		"totalPrice": 447.67,
-		"discountPercent": 14,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 5000061660338,
-		"nmId": 130927227,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "БЕЛИТА",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "8962815224362812624",
-		"sticker": "11287301676",
-		"srid": "32.17335800076364992.0.0"
-	},
-	{
-		"date": "2023-04-29T15:14:52",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "кремдлялица",
-		"techSize": "0",
-		"barcode": "2029125371626",
-		"totalPrice": 500.96,
-		"discountPercent": 17,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 5000061713766,
-		"nmId": 75586396,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "Билита",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "94944875592699081102",
-		"sticker": "11287557773",
-		"srid": "5.57344432076368246.2.0"
-	}
-]
-
-const arrOfOrders2 = [
-	{
-		"date": "2023-04-29T10:29:57",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "aurum",
-		"techSize": "0",
-		"barcode": "2038233991626",
-		"totalPrice": 561.04,
-		"discountPercent": 23,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 5000061570203,
-		"nmId": 111632914,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "Билита",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "5033520541427737073",
-		"sticker": "11286837181",
-		"srid": "5.11740733576359698.0.0"
-	},
-	{
-		"date": "2023-04-29T13:26:25",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "гельпластырь",
-		"techSize": "0",
-		"barcode": "2037029282047",
-		"totalPrice": 447.67,
-		"discountPercent": 14,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 500006166033,
-		"nmId": 130927227,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "БЕЛИТА",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "8962815224362812624",
-		"sticker": "11287301676",
-		"srid": "32.17335800076364992.0.0"
-	},
-	{
-		"date": "2023-04-29T15:14:52",
-		"lastChangeDate": "2023-04-30T07:12:54",
-		"supplierArticle": "кремдлялица",
-		"techSize": "0",
-		"barcode": "2029125371626",
-		"totalPrice": 500.96,
-		"discountPercent": 17,
-		"warehouseName": "Коледино",
-		"oblast": "Брестская область",
-		"incomeID": 0,
-		"odid": 500006171376,
-		"nmId": 75586396,
-		"subject": "Кремы",
-		"category": "Красота",
-		"brand": "Билита",
-		"isCancel": false,
-		"cancel_dt": "0001-01-01T00:00:00",
-		"gNumber": "94944875592699081102",
-		"sticker": "11287557773",
-		"srid": "5.57344432076368246.2.0"
-	}
-]
-
-arrarId = [
-	5000061570204,
-	5000061660338,
-	// 5000061713766,
-	// 5000061570203,
-	// 500006166033,
-	// 500006171376
-]
-
-const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
-	if (orders.length === arrID.length) return arrID;
-
-	let copyOfOrdersID = [...arrID]; //? копирует массив ID с имеющимися заказами
-// console.log(copyOfOrdersID)
-	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
-		console.log(copyOfOrdersID.includes(x.odid) === false, x.odid)
-		if (copyOfOrdersID.includes(x.odid) === false) {
-			return x; //? если такого ID не было записано
+const writeInBuffer = (arrOfOrdrs = []) => {
+	arrOfOrdrs.forEach(x => {
+		if(!ordersBuffer.hasOwnProperty(x.nmId)){
+			ordersBuffer[x.nmId] = {
+				count: 1,
+				cost: x.totalPrice
+			}
+		} else {
+			ordersBuffer[x.nmId].count ++;
+			ordersBuffer[x.nmId].cost += x.totalPrice
 		}
+		ordersBuffer.totalCost += x.totalPrice
 	})
-	
-	console.log(filteringOrders)
-
-	filteringOrders.sort((a, b) => { //? Сортировка массива по возрастанию
-		return Date.parse(a.date) - Date.parse(b.date); //? переводим даты и время в мс и сравниваем
-	});
 }
 
-saveAndSendOrders(arrOfOrders1, arrarId)
+writeInBuffer(arrayOfOrders)
+
+console.log(ordersBuffer.totalCost)

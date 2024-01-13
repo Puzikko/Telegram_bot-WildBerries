@@ -32,12 +32,31 @@ const buttonsWithDateSales = (chatId, arrayOfDates = []) => { //! блок с in
 	bot.sendMessage(chatId, 'Выберите дату:', button)
 };
 
-const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => {
-	if (orders.length === arrID.length) return arrID;
-	let copyOfOrdersID = arrID.map(order => order.odid); //? копирует массив ID с имеющимися заказами
+const saveAndSendOrders = (orders = [], ordersInfo, chatId, translateOrders) => {
+	const arrID = ordersInfo.arrayOfOrders;
+	if (orders.length === arrID.length) return arrID; //? ничего не делаем если из нового респонса новых заказов не пришло
+	let copyOfOrdersID = [...arrID]; //? копирует массив ID с имеющимися заказами
 
 	const filteringOrders = orders.filter(x => { //? отфильтровывается в новый массив объекты заказа
-		if (copyOfOrdersID.includes(x.odid) === false) {
+
+		if (arrID.includes(x.srid) === false) {
+			//? vvvvvvvvv это всё для нового объекта в котором хранится инфа по сегодняшним заказам
+			if (!ordersInfo.hasOwnProperty(x.nmId)) { //? если нет такого артикуля, то...
+				ordersInfo[x.nmId] = { //?  создадим его
+					count: 1, //? инициализируем сколько заказов будет
+					cost: x.priceWithDisc //? инициализируем цену по всем заказам с этим артикулем
+				}
+			} else { //? если был такой
+				ordersInfo[x.nmId].count++; //? добавим 1 заказик
+				ordersInfo[x.nmId].cost += x.priceWithDisc //? и прибавим к получившейся цене
+			}
+			ordersInfo.total += x.priceWithDisc //? общая стоимость по всем заказам за сегодня
+			//? ^^^^^^^^^
+			x.count = ordersInfo[x.nmId].count; //? запишем в отфильтрованный объект инфу: сколько купили по такому артикулу на данный момент
+			x.cost = ordersInfo[x.nmId].cost; //? на какую сумму купили по такому артикулу на данный момент
+			x.total = ordersInfo.total; //? и общая сумма денег на данный момент
+
+			copyOfOrdersID.push(x.srid); //? пушим этот ID в копию массива
 			return x; //? если такого ID не было записано
 		}
 	})
@@ -50,52 +69,53 @@ const saveAndSendOrders = (orders = [], arrID = [], chatId, translateOrders) => 
 		return JSON.parse(JSON.stringify(x)) //! передаём копию объекта (иначе изменит объект заказа в filteringOrders)
 	}));
 	awaitResolve(chatId, transformedOrders, arrID.length, translateOrders)//? кастомная функция для отправки сообщений последовательно
-	return [...arrID, ...filteringOrders]; //? возврат нового массива с ID
+	return [...copyOfOrdersID]; //? возврат нового массива с ID
 }
 
 
 
 const transformArray = (response = []) => {
 	return response.map(obj => {
-		delete obj.lastChangeDate; //?vvv
-		delete obj.incomeID;
-		delete obj.countryName;
-		delete obj.oblastOkrugName;
-		delete obj.regionName;
-		delete obj.isSupply;
-		delete obj.isRealization;
-		delete obj.spp;
-		delete obj.priceWithDisc;
-		delete obj.odid;
-		delete obj.gNumber;
-		delete obj.sticker;
-		delete obj.srid;
-		if (obj.isCancel === false) {
-			delete obj.isCancel;
-			delete obj.cancelDate;
-		} //? ^^^^^^ удаление указанных ключей со свойствами
-		return obj; //? возврат объекта
+		const newObjPattern = { //? vvvvvvv создаём объект с нужными ключами и в нужном порядке
+			'date': obj.date,
+			'supplierArticle': obj.supplierArticle,
+			'barcode': obj.barcode,
+			'totalPrice': obj.totalPrice,
+			'discountPercent': obj.discountPercent,
+			'priceWithDisc': obj.priceWithDisc,
+			'finishedPrice': obj.finishedPrice,
+			'warehouseName': obj.warehouseName,
+			'nmId': obj.nmId,
+			'subject': obj.subject,
+			'category': obj.category,
+			'brand': obj.brand,
+			'orderType': obj.orderType,
+
+			'🎖': `[${obj.count}] куплено сегодня таких за ${obj.cost}`,
+			'🏆': `Сумма за сегодня ${obj.total}`
+		}
+		return newObjPattern; //? возврат объекта
 	});
 }
 
 const translateOrders = {
-	date: '📅 🕔',
+	date: '📅',
 	supplierArticle: '🎁',
 	techSize: 'Размер',
-	barcode: 'Бар-код',
+	barcode: '📝',
 	totalPrice: '💲',
-	priceWithDiscount: '💰',
+	priceWithDisc: '💰',
 	discountPercent: '📉, %',
 	warehouseName: '🚚',
 	oblast: '🏛',
 	incomeID: 'Номер поставки (от продавца на склад)',
 	odid: 'Уникальный идентификатор позиции заказа',
-	nmId: 'Артикул WB',
-	subject: 'Предмет',
-	category: 'Категория',
-	brand: 'Бренд',
-	orderType: 'Тип заказа',
-	finishedPrice: 'Цена для покупателя 💲',
+	nmId: '🏷',
+	subject: '💎',
+	category: '🗂',
+	brand: '🪩',
+	orderType: '🎫',
+	finishedPrice: '💵',
 	isCancel: 'Отмена заказа ❌',
 	cancelDate: '📅 🕔 ❌',
 	gNumber: 'Номер заказа',

@@ -5,7 +5,11 @@ const { translateOrders } = require('./commons');
 const { saveAndSendOrders } = require('./commons');
 
 const bot = new TelegramApi(token);
-let arrayOfOrders = [];
+
+const ordersInfo = {
+    arrayOfOrders: [],
+    total: 0
+} //? инициализируем объект для хранения данных о заказах
 
 const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking, isWorking) => { //! Обработчик заказов
     if (!isWorking) return;
@@ -16,8 +20,10 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
     const date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate(); //? определение сегодняшней даты в формате ГГГГ-ММ-ДД
     console.log(hours, minutes)
     if (hours === 0 && minutes >= 0 && minutes <= 5) { //? проверка времени 00:00 - 00:05, в этом интервале обновим массив
-        arrayOfOrders = []; //? обновление массива при смене дня
-        // bot.sendMessage(chatId, 'Массив с ID обновлён.')
+        ordersInfo = {
+            arrayOfOrders: [],
+            total: 0
+        }; //? обновление объекта с инфой при смене дня
     };
     try {
         // const promiseOrdersFlag0 = await ordersAPI(date)//? запрос на WB с flag = 0
@@ -25,7 +31,7 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
 
         const promiseOrdersFlag1 = await ordersAPI(date, 1)//? запрос на WB с flag = 1
 
-        const response = promiseOrdersFlag1;
+        // const response = promiseOrdersFlag1;
 
         // const response = await Promise.all([ //? выполняем оба запроса
         //     //promiseOrdersFlag0,
@@ -34,11 +40,10 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
         //     return array[0]
         //     // .concat(array[1])
         // }) //? объединяем два полученных массива
-        console.log(response)
 
-        arrayOfOrders = await saveAndSendOrders(await response, arrayOfOrders, chatId, translateOrders) //? Присваиваем массиву полученные заказы
+        ordersInfo.arrayOfOrders = await saveAndSendOrders(await promiseOrdersFlag1, ordersInfo, chatId, translateOrders) //? Присваиваем массиву полученные заказы
     } catch (error) {
-        console.log(error.response?.data)
+        console.log(error)
         stopInterval(); //? Остановка интервала при появлении ошибки
         if (!!error?.response?.status) {
             switch (error.response.status) { //? по номеру ошибки отправляем текст боту
@@ -67,7 +72,7 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
 
 
 const getArrayOfOrders = () => {
-    return [...arrayOfOrders];
+    return [...ordersInfo.arrayOfOrders];
 }
 
 module.exports.getOrdersTiming = getOrdersTiming;
