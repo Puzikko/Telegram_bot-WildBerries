@@ -90,9 +90,9 @@ const transformArray = (response = []) => {
 			'category': obj.category,
 			'brand': obj.brand,
 			'orderType': obj.orderType,
-
-			'🎖': `[${obj.count}] куплено сегодня таких за ${obj.cost}`,
-			'🏆': `Сумма за сегодня ${obj.total}`
+			'newString': '', //? просто пробел в сообщении
+			'🎖': `[${obj.count}] куплено сегодня за ${obj.cost}`,
+			'🏆': `Сумма за сегодня ${+obj.total.toFixed(2)}`
 		}
 		return newObjPattern; //? возврат объекта
 	});
