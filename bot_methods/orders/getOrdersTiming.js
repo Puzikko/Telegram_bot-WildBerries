@@ -6,7 +6,7 @@ const { saveAndSendOrders } = require('./commons');
 
 const bot = new TelegramApi(token);
 
-const ordersInfo = {
+let ordersInfo = {
     arrayOfOrders: [],
     total: 0
 } //? инициализируем объект для хранения данных о заказах
