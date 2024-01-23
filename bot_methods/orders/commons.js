@@ -91,7 +91,7 @@ const transformArray = (response = []) => {
 			'brand': obj.brand,
 			'orderType': obj.orderType,
 			'newString': '', //? просто пробел в сообщении
-			'🎖': `[${obj.count}] куплено сегодня за ${obj.cost}`,
+			'🎖': `[${obj.count}] куплено сегодня за ${obj.cost.toFixed(2)}`,
 			'🏆': `Сумма за сегодня ${+obj.total.toFixed(2)}`
 		}
 		return newObjPattern; //? возврат объекта
