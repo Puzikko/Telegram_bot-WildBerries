@@ -43,34 +43,39 @@ const getOrdersTiming = async (chatId, stopInterval, startInterval, setIsWorking
 
         ordersInfo.arrayOfOrders = await saveAndSendOrders(await promiseOrdersFlag1, ordersInfo, chatId, translateOrders) //? Присваиваем массиву полученные заказы
     } catch (error) {
-        console.log(error)
-        bot.sendMessage(chatId, error)
-        stopInterval(); //? Остановка интервала при появлении ошибки
-        setTimeout(() => { //? сразу же его запуск с задержкой в 60 сек
-            startInterval(chatId, stopInterval, startInterval);
-        }, 60000);
-        // if (!!error?.response?.status) {
-        //     switch (error.response.status) { //? по номеру ошибки отправляем текст боту
-        //         case 408:
-        //             setIsWorking(true);
-        //             setTimeout(() => {
-        //                 setIsWorking(false);
-        //                 startInterval(chatId, stopInterval, startInterval);
-        //                 // bot.sendMessage(chatId, 'Interval снова в работе.');
-        //             }, 60000);
-        //             // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
-        //             break;
-        //         case 429:
-        //             setTimeout(() => {
-        //                 startInterval(chatId, stopInterval, startInterval);
-        //             }, 60000);
-        //             break;
-        //         default:
-        //             // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))
-        //             // bot.sendMessage(chatId, 'Интервальная функция была автоматически остановлена.\nЧтобы запустить её снова отправьте команду:\n/start')
-        //             break;
-        //     }
-        // } else { bot.sendMessage(chatId, 'Что-то пошло не так в Интервале') } //? в случае ошибки отправляет сообщение
+        // console.log(error)
+        // // bot.sendMessage(chatId, error)
+        // stopInterval(); //? Остановка интервала при появлении ошибки
+        // setTimeout(() => { //? сразу же его запуск с задержкой в 60 сек
+        //     startInterval(chatId, stopInterval, startInterval);
+        // }, 60000);
+        if (!!error?.response?.status) {
+            switch (error.response.status) { //? по номеру ошибки отправляем текст боту
+                case 408:
+                    setIsWorking(true);
+                    setTimeout(() => {
+                        setIsWorking(false);
+                        startInterval(chatId, stopInterval, startInterval);
+                        // bot.sendMessage(chatId, 'Interval снова в работе.');
+                    }, 60000);
+                    // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.statusText + '\nИнтервальная функция запуститься автоматически через 20 минут!')
+                    break;
+                case 429:
+                    setTimeout(() => {
+                        setIsWorking(false);
+                        startInterval(chatId, stopInterval, startInterval);
+                    }, 60000);
+                    break;
+                default:
+                    setTimeout(() => {
+                        setIsWorking(false);
+                        startInterval(chatId, stopInterval, startInterval);
+                    }, 60000);
+                    // bot.sendMessage(chatId, 'Error ' + error.response.status + ':  ' + error.response.data.errors.join('\n'))
+                    // bot.sendMessage(chatId, 'Интервальная функция была автоматически остановлена.\nЧтобы запустить её снова отправьте команду:\n/start')
+                    break;
+            }
+        } else { bot.sendMessage(chatId, 'Что-то пошло не так в Интервале') } //? в случае ошибки отправляет сообщение
     }
 };
 
